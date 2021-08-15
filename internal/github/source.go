@@ -41,7 +41,8 @@ func findGithubRepos(srcData []byte) ([]string, error) {
 	var returnData []string
 
 	for _, v := range found {
-
+		// remove invalid data
+		// TODO: need more smart
 		if strings.Contains(string(v), "CONTRIBUTING.md") {
 			continue
 		}
