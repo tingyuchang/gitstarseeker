@@ -3,6 +3,8 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 )
@@ -39,8 +41,8 @@ func httpDo(ctx context.Context, req *http.Request, f func(*http.Response, error
 func GetRepo(ctx context.Context, userRepo string) (Repository, error) {
 	// setup request
 	req, err := http.NewRequest("GET", GITHUB_API_URL+"repos/"+userRepo, nil)
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	req.Header.Set("Authorization", "token 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")
+	req.Header.Set("Accept", viper.Get("http.githubheaderaccept").(string))
+	req.Header.Set("Authorization", fmt.Sprintf("token %v", viper.Get("http.githubheaderauthorization")))
 	if err != nil {
 		return Repository{}, err
 	}
