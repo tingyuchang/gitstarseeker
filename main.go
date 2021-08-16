@@ -4,24 +4,23 @@ import (
 	"context"
 	"fmt"
 	"gitstarseeker/internal/github"
-	"log"
-	"time"
+
+	"github.com/spf13/viper"
 )
 
 func main() {
-	repos := github.ReadSource()
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-	go func() {
-		repo, err := github.GetRepo(ctx, repos[0])
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Printf("Repository: %s\ndesciption: %s\nstarts: %d\n", repo.FullName, repo.Description, repo.StargazersCount)
-	}()
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config/")
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println(err)
+	}
 
-	select {
-	case <-ctx.Done():
-		fmt.Println("program end.")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	repos := github.FetchBatchRepositories(ctx)
+
+	for _, v := range repos {
+		fmt.Printf("Repository: %s\tdesciption: %s\tstarts: %d\n", v.FullName, v.Description, v.StargazersCount)
 	}
 }
