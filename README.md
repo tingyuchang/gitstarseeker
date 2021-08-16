@@ -14,7 +14,8 @@
 ## Setup
 
 1. create ./config/config.yaml, and add following fields
-`mode: DEV_OR_PROD
+```
+mode: DEV_OR_PROD
 
  db:
    username: DB_USERNAME
@@ -27,4 +28,4 @@
    github_header_accept: "application/vnd.github.v3+json"
    github_header_authorization: GITHUB_TOKEN
 
-`
+```
