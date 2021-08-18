@@ -4,11 +4,16 @@ import (
 	"context"
 	"fmt"
 	"gitstarseeker/internal/github"
+	"time"
 
 	"github.com/spf13/viper"
 )
 
 func main() {
+	start := time.Now()
+	defer func() {
+		fmt.Println(time.Since(start))
+	}()
 	// setup conf
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")

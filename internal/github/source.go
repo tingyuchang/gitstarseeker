@@ -1,38 +1,42 @@
 package github
 
 import (
+	"context"
+	"gitstarseeker/internal/service"
 	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 )
 // ReadSource read source from url
 // return []string which store path of github repository
 func ReadSource(url string) []string {
-	c := make(chan struct{})
-	var result []string
-	go func() {
-		// TODO: user could set any type source ex: http or file
-		res, err := http.Get(url)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// TODO: user could set any type source ex: http or file
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
-		data, err := io.ReadAll(res.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		repos, err := findGithubRepos(data)
-		result = repos
-		c <- struct{}{}
-	}()
-
-	select {
-	case <-c:
-		return result
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Print(err)
+		return nil
 	}
+	var result []string
+	err = service.HttpDo(ctx, req, func(resp *http.Response, err error) error {
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		repos, err := findGithubRepos(data)
+		if err != nil {
+			return err
+		}
+		result = repos
+		return nil
+	})
+
+	return result
 }
 
 // findGithubRepos execute regexp to fid valid github repository path
