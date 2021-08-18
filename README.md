@@ -15,8 +15,7 @@
 
 1. create ./config/config.yaml, and add following fields
 ```
-mode: DEV_OR_PROD
-
+mode: DEV
  db:
    username: DB_USERNAME
    password: DB_PASSWORD
@@ -27,5 +26,6 @@ mode: DEV_OR_PROD
    reqtimeout: 800
    github_header_accept: "application/vnd.github.v3+json"
    github_header_authorization: GITHUB_TOKEN
-
+source:
+  awesome-go: "https://raw.githubusercontent.com/avelino/awesome-go/master/README.md"
 ```

@@ -7,13 +7,14 @@ import (
 	"regexp"
 	"strings"
 )
-
-func ReadSource() []string {
+// ReadSource read source from url
+// return []string which store path of github repository
+func ReadSource(url string) []string {
 	c := make(chan struct{})
 	var result []string
 	go func() {
-		// TODO: user could set any source
-		res, err := http.Get("https://raw.githubusercontent.com/avelino/awesome-go/master/README.md")
+		// TODO: user could set any type source ex: http or file
+		res, err := http.Get(url)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -34,6 +35,7 @@ func ReadSource() []string {
 	}
 }
 
+// findGithubRepos execute regexp to fid valid github repository path
 func findGithubRepos(srcData []byte) ([]string, error) {
 	// `github.com/\S+\) `
 	re := regexp.MustCompile(`github.com/\S+\) `)
